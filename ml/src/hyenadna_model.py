@@ -3,7 +3,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.preprocessing import LabelEncoder
-
+import numpy as np
 
 
 class HyenaDNAModel(UniversalModel):
@@ -31,7 +31,7 @@ class HyenaDNAModel(UniversalModel):
 
     def train(self, X_train, y_train, epochs=10, batch_size=16, lr=2e-5):
         encodings = self._tokenize(X_train)
-        encoded_labels = self.label_encoder.transform(y_train)
+        encoded_labels = self.label_encoder.fit_transform(y_train)
         labels = torch.tensor(encoded_labels, dtype=torch.long)
 
         dataset = TensorDataset(encodings["input_ids"], labels)
@@ -44,7 +44,7 @@ class HyenaDNAModel(UniversalModel):
             total_loss = 0.0
             for input_ids, batch_labels in loader:
                 input_ids = input_ids.to(self.device)
-                batch_labels = input_ids.to(self.device)
+                batch_labels = batch_labels.to(self.device)
 
                 optimizer.zero_grad()
                 outputs = self.model(input_ids=input_ids, labels=batch_labels)
@@ -61,10 +61,25 @@ class HyenaDNAModel(UniversalModel):
         dataloader = DataLoader(dataset, batch_size=16)
 
         self.model.eval()
-        all_preds = list()
+        all_preds = []
         with torch.no_grad():
-            for (input_ids, ) in dataloader:
+            for (input_ids,) in dataloader:
                 outputs = self.model(input_ids=input_ids.to(self.device))
                 all_preds.extend(torch.argmax(outputs.logits, dim=1).cpu().numpy())
-        return self.label_encoder.inverse_transform(all_preds)
-                
+
+        return self.label_encoder.inverse_transform(all_preds)  # returns string labels
+
+
+    def predict_proba(self, X):
+        encodings = self._tokenize(X)
+        dataset = TensorDataset(encodings["input_ids"])
+        dataloader = DataLoader(dataset, batch_size=16)
+
+        self.model.eval()
+        all_probs = []
+        with torch.no_grad():
+            for (input_ids,) in dataloader:
+                outputs = self.model(input_ids=input_ids.to(self.device))
+                all_probs.extend(torch.softmax(outputs.logits, dim=1).cpu().numpy())
+
+        return np.array(all_probs)  # returns (n_samples, n_classes) probabilities 
