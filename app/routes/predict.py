@@ -14,4 +14,5 @@ def predict(request: PredictRequest):
         return PredictResponse(**result, model_used=request.model_name)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
+    except Exception as e:
+        raise HTTPException(status=500, detail=str(e))
