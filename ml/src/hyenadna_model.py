@@ -1,4 +1,4 @@
-from .universal_model import UniversalModel
+from ml.src.universal_model import UniversalModel
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch
 from torch.utils.data import TensorDataset, DataLoader

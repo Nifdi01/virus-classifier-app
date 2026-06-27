@@ -1,4 +1,4 @@
-from .universal_model import UniversalModel
+from ml.src.universal_model import UniversalModel
 
 
 class SklearnModel(UniversalModel):

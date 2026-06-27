@@ -2,7 +2,7 @@ import pickle
 import os
 import torch
 
-from .hyenadna_model import HyenaDNAModel
+from ml.src.hyenadna_model import HyenaDNAModel
 from transformers import AutoTokenizer
 
 def save_model(model, path):
