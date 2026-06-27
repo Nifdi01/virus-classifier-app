@@ -29,7 +29,7 @@ class PredictResponse(BaseModel):
     influenza_type: str
     confidence: float
     scores: dict[str, float]
-    sequence_lengh: int
+    sequence_length: int
     model_used: str
 
 
