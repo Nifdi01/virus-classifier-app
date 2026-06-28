@@ -4,7 +4,7 @@ from app.registry import registry
 from app.inference import run_inference
 
 
-router = APIRouter(prefix="/predict", tags=["predcit"])
+router = APIRouter(prefix="/predict", tags=["predict"])
 
 @router.post("", response_model=PredictResponse)
 def predict(request: PredictRequest):

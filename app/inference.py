@@ -9,8 +9,8 @@ def run_inference(model, sequence: str) -> dict:
         proba = model.model.predict_proba(kmer)[0]
         classes = model.label_encoder.classes_
     else:
-        label = model.model.predict([sequence])[0]
-        proba = model.model.predict_proba([sequence])[0]
+        label = model.predict([sequence])[0]
+        proba = model.predict_proba([sequence])[0]
         classes = model.label_encoder.classes_
 
     return {
