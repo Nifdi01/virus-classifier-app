@@ -1,5 +1,5 @@
 import sys
-from typing import Any
+from typing import Any, Dict
 from dataclasses import dataclass
 
 import joblib
@@ -52,8 +52,7 @@ class SklearnBundle:
 
 class ModelRegistry:
     def __init__(self):
-        self._model = None
-        self._active_name = None
+        self._cache: Dict[str, Any] = {}
         self._lock = Lock()
 
     def get(self, name: str):
@@ -61,12 +60,13 @@ class ModelRegistry:
             raise ValueError(f"Unkown Model {name}")
         
         with self._lock:
-            if self._active_name == name:
-                return self._model
-            self._unload()
-            self._model = self._load(name)
-            self._active_name = name
-            return self._model
+            if name not in self._cache:
+                self._cache[name] = self._load(name)
+            return self._cache[name]
+
+    def _preload(self):
+        for name in MODEL_CONFIGS:
+            self.get(name)
 
     def _unload(self):
         if self._model is None:
@@ -81,7 +81,6 @@ class ModelRegistry:
         if cfg["type"] == "hyenadna":
             return load_model(cfg["path"], cfg["num_labels"])
         return self._load_sklearn(cfg) 
-
 
     def _load_sklearn(self, cfg):
         model = joblib.load(cfg["path"])

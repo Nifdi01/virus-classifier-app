@@ -10,8 +10,8 @@ router = APIRouter(prefix="/predict", tags=["predict"])
 def predict(request: PredictRequest):
     try:
         model = registry.get(request.model_name)
-        result = run_inference(model, request.sequence)
-        return PredictResponse(**result, model_used=request.model_name)
+        result = run_inference(model, [request.sequence])
+        return PredictResponse(**result[0], model_used=request.model_name)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
