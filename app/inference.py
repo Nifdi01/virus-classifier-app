@@ -4,7 +4,7 @@ from app.registry import SklearnBundle
 
 def run_inference(model, sequences: list[str]) -> list[dict]:
     if isinstance(model, SklearnBundle):
-        kmers = model.vectorizer.transform(sequences).toarray() / len(sequences)
+        kmers = model.vectorizer.transform(sequences).toarray()
         lengths = np.array([len(s) for s in sequences]).reshape(-1, 1)
         kmers = kmers / lengths
 
