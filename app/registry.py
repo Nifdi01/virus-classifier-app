@@ -9,7 +9,6 @@ from threading import Lock
 sys.path.append("ml/src")
 from ml.src.hyenadna_model import HyenaDNAModel
 from ml.src.utils import load_model
-from ml.src.sklearn_model import SklearnModel
 import ml.src.sklearn_model as _sklearn_module
 
 sys.modules['__mp_main__'] = _sklearn_module

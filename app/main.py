@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from app.registry import registry
-from app.routes import predict
+
+from app.routes import predict, batch
 
 app = FastAPI(
     title="Influenza Classification API",
@@ -10,7 +10,5 @@ app = FastAPI(
 )
 
 app.include_router(predict.router)
+app.include_router(batch.router)
 
-@app.get("/heatlh")
-def health():
-    return {"status": "ok", "active_model": registry._active_name}
