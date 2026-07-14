@@ -39,3 +39,10 @@ export async function fetchBatchStatus(
   );
   return data;
 }
+
+export function parseSequencesFromFasta(text: string): string[] {
+  return text
+    .split(/^>/m)
+    .filter((block) => block.trim().length > 0)
+    .map((block) => block.split("\n").slice(1).join("").trim().toUpperCase());
+}
