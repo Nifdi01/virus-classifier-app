@@ -20,6 +20,14 @@ services:
       - REDIS_URL=redis://redis:6379/0
     volumes:
       - .:/app
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
   worker:
     build: .
     command: celery -A worker.celery_app worker --loglevel=info --concurrency=1
