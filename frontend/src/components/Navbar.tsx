@@ -12,7 +12,7 @@ export default function Navbar() {
       <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
         <a className="flex title-font font-medium items-center text-gray-900 md:mb-0">
           <img
-            className="w-15 h-15 text-white rounded-full"
+            className="w-12 h-12 text-white rounded-full"
             src="/icons.svg"
           ></img>
           <span className="ml-3 text-xl">Virus Classifier</span>
