@@ -28,6 +28,7 @@ export async function submitBatch(
       model_name: modelName,
     },
   );
+  console.log(data);
   return data;
 }
 
@@ -38,6 +39,30 @@ export async function fetchBatchStatus(
     `/batch/predict/${taskId}`,
   );
   return data;
+}
+
+export function pollBatchStatus(
+  taskId: string,
+  onUpdate: (res: BatchPredictResponse) => void,
+  intervalMs = 2000,
+): () => void {
+  let cancelled = false;
+
+  const tick = async () => {
+    if (cancelled) return;
+    try {
+      const res = await fetchBatchStatus(taskId);
+      onUpdate(res);
+      if (res.status === "SUCCESS" || res.status === "FAILURE") return;
+    } catch {
+      // just retry on next click
+    }
+    if (!cancelled) setTimeout(tick, intervalMs);
+  };
+  tick();
+  return () => {
+    cancelled = true;
+  };
 }
 
 export function parseSequencesFromFasta(text: string): string[] {
