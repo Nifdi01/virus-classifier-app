@@ -24,7 +24,7 @@ export interface BatchPredictResponse {
   task_id: string;
   status: CeleryStatus;
   progress?: BatchProgress | null;
-  results?: PredictionResult | null;
+  results?: PredictionResult[] | null;
 }
 
 export interface JobSummary {
