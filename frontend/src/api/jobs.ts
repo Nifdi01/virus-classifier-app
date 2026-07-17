@@ -4,6 +4,7 @@ import type {
   BatchPredictResponse,
   ModelName,
   PredictResponse,
+  JobListResponse,
 } from "../types/job";
 
 export async function predictSinlge(
@@ -63,6 +64,16 @@ export function pollBatchStatus(
   return () => {
     cancelled = true;
   };
+}
+
+export async function fetchJobs(
+  limit = 50,
+  offset = 0,
+): Promise<JobListResponse> {
+  const { data } = await apiClient.get<JobListResponse>("/batch", {
+    params: { limit, offset },
+  });
+  return data;
 }
 
 export function parseSequencesFromFasta(text: string): string[] {

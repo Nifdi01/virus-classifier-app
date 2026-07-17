@@ -80,3 +80,17 @@ class BatchPredictResponse(BaseModel):
     status: Literal["PENDING", "PROGRESS", "SUCCESS", "FAILURE"]
     progress: BatchProgress | None = None
     results: list[PredictionResult] | None = None
+
+
+class JobSummary(BaseModel):
+    task_id: UUID
+    submitted_at: str
+    sequence_count: int
+    file_size_bytes: int | None
+    model_name: ModelName
+    status: Literal["PENDING", "PROGRESS", "SUCCESS", "FAILURE"]
+
+
+class JobListResponse(BaseModel):
+    jobs: list[JobSummary]
+    total: int
