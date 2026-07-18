@@ -51,15 +51,15 @@ The exploratory stage focuses on sequence composition and class separability in 
 
 ### PCA projection (3-mer frequencies)
 
-![PCA of 3-mer frequencies](./ml/figures/pca_results_3mer_freq.jpg)
+![PCA of 3-mer frequencies](./figures/pca_results_3mer_freq.jpg)
 
 ### t-SNE projection (3-mer frequencies)
 
-![t-SNE of 3-mer frequencies](./ml/figures/tsne_results_3mer_freq.jpg)
+![t-SNE of 3-mer frequencies](./figures/tsne_results_3mer_freq.jpg)
 
 ### UMAP projection (3-mer frequencies)
 
-![UMAP of 3-mer frequencies](./ml/figures/umap_results_3mer_freq.jpg)
+![UMAP of 3-mer frequencies](./figures/umap_results_3mer_freq.jpg)
 
 **Interpretation:** the projections indicate partial clustering by subtype, with meaningful overlap among related influenza classes, motivating robust multiclass modeling and per-class evaluation.
 
@@ -83,19 +83,19 @@ Models compared in `/ml/notebooks/03_comparative_analysis.ipynb`:
 
 ### ROC curves by class and model
 
-![ROC curves](./ml/figures/results_roc_curves.png)
+![ROC curves](./figures/results_roc_curves.png)
 
 ### Precision–Recall curves by class and model
 
-![PR curves](./ml/figures/results_pr_curves.png)
+![PR curves](./figures/results_pr_curves.png)
 
 ### Per-class F1 heatmap
 
-![Per-class F1 heatmap](./ml/figures/per_class_f1_heatmap.png)
+![Per-class F1 heatmap](./figures/per_class_f1_heatmap.png)
 
 ### Efficiency vs performance trade-off
 
-![Efficiency vs performance](./ml/figures/efficiency_vs_performance.png)
+![Efficiency vs performance](./figures/efficiency_vs_performance.png)
 
 ## Key Conclusions
 
