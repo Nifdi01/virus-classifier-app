@@ -32,8 +32,13 @@ export interface JobSummary {
   submitted_at: string;
   sequence_count: number;
   file_size_bytes: number | null;
-  status: CeleryStatus;
   model_name: ModelName;
+  status: CeleryStatus;
+}
+
+export interface JobListResponse {
+  jobs: JobSummary[];
+  total: number;
 }
 
 export const MODEL_OPTIONS: { value: ModelName; label: string }[] = [

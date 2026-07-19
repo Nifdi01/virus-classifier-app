@@ -11,6 +11,8 @@ The system includes:
 - A **Celery + Redis** background queue for batch jobs
 - A **React + Vite** frontend for submitting sequences and viewing job status
 
+More information on the ML models and their analysis can be found [here](./ml/README.md)
+
 ---
 
 ## Table of Contents
