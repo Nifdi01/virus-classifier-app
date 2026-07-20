@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Form
 from celery.result import AsyncResult
 
 from typing import Literal, cast
@@ -91,3 +91,43 @@ def list_batches(limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge
             )
         )
     return JobListResponse(jobs=jobs, total=count_jobs())
+
+
+@router.post("/upload", response_model=BatchPredictResponse)
+async def upload_batch(
+    file: UploadFile = File(...), model_name: ModelName = Form(ModelName.hyenadna)
+):
+    content = await file.read()
+    text = content.decode("utf-8")
+
+    sequences = list()
+    current_seq = list()
+
+    for line in text.splitlines():
+        line = line.strip()
+        if line.startswith(">"):
+            if current_seq:
+                sequences.append("".join(current_seq))
+                current_seq = list()
+        elif line:
+            current_seq.append(line)
+    if current_seq:
+        sequences.append("".join(current_seq))
+
+    try:
+        request = BatchPredictRequest(sequences=sequences, model_name=model_name)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    task = predict_batch_task.delay(request.sequences, request.model_name)
+
+    try:
+        create_job(
+            task_id=task.id,
+            sequence_count=len(request.sequences),
+            model_name=request.model_name,
+        )
+    except Exception as e:
+        print(f"Warning: Failed to record job metadata for {task.id}: {e}")
+
+    return BatchPredictResponse(task_id=UUID(task.id), status="PENDING")
