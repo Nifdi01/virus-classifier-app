@@ -9,7 +9,8 @@ The system includes:
 
 - A **FastAPI** inference API
 - A **Celery + Redis** background queue for batch jobs
-- A **React + Vite** frontend for submitting sequences and viewing job status
+- A **Redis-backed job metadata store** for listing recent jobs
+- A **React + Vite** frontend for file upload, job submission, and job history/detail views
 
 More information on the ML models and their analysis can be found [here](./ml/README.md)
 
@@ -23,6 +24,7 @@ More information on the ML models and their analysis can be found [here](./ml/RE
 - [Quick Start (Docker)](#quick-start-docker)
 - [Local Development](#local-development)
 - [API Reference](#api-reference)
+- [Frontend Features](#frontend-features)
 - [Input Validation Rules](#input-validation-rules)
 - [Available Models](#available-models)
 
@@ -50,6 +52,7 @@ Model Registry    Celery Worker (worker.py / app/tasks.py)
 ```text
 .
 ├── app/                  # FastAPI app, routes, schemas, inference, model registry
+│   └── job_store.py      # Redis-backed metadata index for batch jobs
 ├── frontend/             # React + TypeScript UI
 ├── ml/
 │   ├── models/           # Trained model artifacts (hyenadna + baselines)
@@ -200,6 +203,41 @@ Poll batch status:
 - `SUCCESS` (includes `results`)
 - `FAILURE`
 
+### `GET /batch`
+
+List submitted batch jobs (newest-first) with pagination:
+
+- Query params: `limit` (default 50, max 200), `offset` (default 0)
+- Returns `jobs` and `total`
+
+### `POST /batch/upload`
+
+Submit a batch job using a FASTA/TXT upload (`multipart/form-data`):
+
+- `file`: FASTA-style content (`.fasta`, `.fas`, `.fa`, `.txt`)
+- `model_name`: one of the configured model names
+
+Server behavior:
+
+- Parses FASTA entries into sequences
+- Validates and enqueues the batch
+- Returns `task_id` with `PENDING` status
+
+---
+
+## Frontend Features
+
+- **Home page** with quick navigation to processing and history
+- **Processor page** with:
+  - Drag-and-drop or click-to-upload FASTA/TXT files
+  - Model selection before submission
+  - Immediate link to the submitted job detail page
+- **History page** with paginated job listing (`/history`)
+- **Job detail page** (`/history/:jobId`) with:
+  - Live polling of `PENDING`/`PROGRESS` jobs
+  - Progress bar for in-flight jobs
+  - Expandable per-sequence score breakdown for completed jobs
+
 ---
 
 ## Input Validation Rules
@@ -207,9 +245,10 @@ Poll batch status:
 From `/home/runner/work/virus-classifier-app/virus-classifier-app/app/schemas.py`:
 
 - Allowed nucleotide alphabet: `A`, `C`, `T`, `G`, `N` (case-insensitive)
-- Batch size limit: **100 sequences**
-- Max sequence length: **32,000**
 - Empty sequences are rejected
+- Batch request constraints:
+  - Max **100** sequences per batch
+  - Max sequence length **32,000** per sequence
 
 ---
 
